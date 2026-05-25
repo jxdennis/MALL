@@ -1,41 +1,47 @@
 package com.shop.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 public class Product {
     private int id;
     private int sellerId;
+    private String sellerName;
     private String name;
-    private String category; // 🆕 新增：商品分类
     private String description;
-    private double originalPrice;
+    private BigDecimal originalPrice;
     private int stock;
     private String imagePath;
     private int discountStrategyId;
-
-    // 联表查询带出的折扣策略字段
+    private String strategyName;
     private String strategyClass;
-    private double discountValue;
+    private BigDecimal discountValue;
+    private LocalDateTime createTime;
 
-    // --- 快捷生成 Getter 和 Setter ---
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public int getSellerId() { return sellerId; }
     public void setSellerId(int sellerId) { this.sellerId = sellerId; }
+    public String getSellerName() { return sellerName; }
+    public void setSellerName(String sellerName) { this.sellerName = sellerName; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public double getOriginalPrice() { return originalPrice; }
-    public void setOriginalPrice(double originalPrice) { this.originalPrice = originalPrice; }
+    public BigDecimal getOriginalPrice() { return originalPrice; }
+    public void setOriginalPrice(BigDecimal originalPrice) { this.originalPrice = originalPrice; }
     public int getStock() { return stock; }
     public void setStock(int stock) { this.stock = stock; }
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
     public int getDiscountStrategyId() { return discountStrategyId; }
     public void setDiscountStrategyId(int discountStrategyId) { this.discountStrategyId = discountStrategyId; }
+    public String getStrategyName() { return strategyName; }
+    public void setStrategyName(String strategyName) { this.strategyName = strategyName; }
     public String getStrategyClass() { return strategyClass; }
     public void setStrategyClass(String strategyClass) { this.strategyClass = strategyClass; }
-    public double getDiscountValue() { return discountValue; }
-    public void setDiscountValue(double discountValue) { this.discountValue = discountValue; }
+    public BigDecimal getDiscountValue() { return discountValue; }
+    public void setDiscountValue(BigDecimal discountValue) { this.discountValue = discountValue; }
+    public LocalDateTime getCreateTime() { return createTime; }
+    public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }
 }

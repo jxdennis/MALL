@@ -1,7 +1,7 @@
 package com.shop.controller;
 
-import com.shop.dao.UserDao;
 import com.shop.entity.User;
+import com.shop.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,39 +11,33 @@ import java.io.IOException;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+    private final UserService userService = new UserService();
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String uname = req.getParameter("username");
-        String pword = req.getParameter("password");
-
-        try {
-            UserDao userDao = new UserDao();
-            User user = userDao.login(uname, pword);
-
-            if (user != null) {
-                req.getSession().setAttribute("loginUser", user);
-
-                // 🚨 修复点：强制拼接 getContextPath() 实现跨目录跳转
-                if ("buyer".equals(user.getRole())) {
-                    resp.sendRedirect(req.getContextPath() + "/buyer/index.jsp");
-                } else if ("seller".equals(user.getRole())) {
-                    resp.sendRedirect(req.getContextPath() + "/seller/index.jsp");
-                } else {
-                    resp.sendRedirect(req.getContextPath() + "/login.jsp");
-                }
-            } else {
-                req.setAttribute("msg", "用户名或密码输入错误，请重新输入！");
-                req.getRequestDispatcher("/login.jsp").forward(req, resp);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            req.setAttribute("msg", "系统数据库连接发生异常！");
-            req.getRequestDispatcher("/login.jsp").forward(req, resp);
-        }
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.sendRedirect(req.getContextPath() + "/login.jsp");
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.sendRedirect(req.getContextPath() + "/login.jsp");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            User user = userService.login(req.getParameter("username"), req.getParameter("password"));
+            if (user == null) {
+                req.setAttribute("msg", "用户名或密码错误");
+                req.getRequestDispatcher("/login.jsp").forward(req, resp);
+                return;
+            }
+            req.getSession().setAttribute("loginUser", user);
+            if ("buyer".equals(user.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/buyer/products");
+            } else if ("seller".equals(user.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/seller/products");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
+            }
+        } catch (Exception e) {
+            req.setAttribute("msg", "登录失败：" + e.getMessage());
+            req.getRequestDispatcher("/login.jsp").forward(req, resp);
+        }
     }
 }

@@ -1,47 +1,40 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>用户登录 - 多角色网上商城</title>
+    <title>登录 - 多角色网上商城</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f6f9; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .login-box { width: 360px; padding: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; margin-bottom: 25px; }
-        label { font-size: 14px; color: #555; font-weight: bold; }
-        input[type="text"], input[type="password"] { width: 100%; padding: 10px; margin: 8px 0 20px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        button:hover { background-color: #0056b3; }
-        .error-msg { background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; font-size: 14px; margin-bottom: 15px; text-align: center; border: 1px solid #f5c6cb; }
-        .footer-links { margin-top: 20px; text-align: center; font-size: 14px; color: #666; }
-        .footer-links a { color: #007bff; text-decoration: none; font-weight: bold; }
-        .footer-links a:hover { text-decoration: underline; }
+        body { margin: 0; font-family: Arial, "Microsoft YaHei", sans-serif; background: #eef2f7; min-height: 100vh; display: grid; place-items: center; }
+        .box { width: 380px; background: white; border-radius: 8px; padding: 30px; box-shadow: 0 12px 32px rgba(15,23,42,.12); }
+        h2 { margin-top: 0; }
+        label { display: block; margin: 14px 0 6px; font-weight: 700; }
+        input { width: 100%; box-sizing: border-box; padding: 11px; border: 1px solid #cbd5e1; border-radius: 6px; }
+        button { width: 100%; margin-top: 22px; padding: 12px; border: 0; border-radius: 6px; background: #2563eb; color: white; font-weight: 700; cursor: pointer; }
+        .msg { padding: 10px; border-radius: 6px; background: #fee2e2; color: #991b1b; margin-bottom: 12px; }
+        .ok { background: #dcfce7; color: #166534; }
+        .links { text-align: center; margin-top: 18px; }
+        a { color: #2563eb; text-decoration: none; }
     </style>
 </head>
 <body>
-<div class="login-box">
-    <h2>系统用户登录</h2>
-
-    <%-- 读取并展示后端传递的登录错误提示 --%>
-    <%
-        String msg = (String) request.getAttribute("msg");
-        if (msg != null) {
-    %>
-    <div class="error-msg"><%= msg %></div>
-    <%
-        }
-    %>
-
+<div class="box">
+    <h2>账号登录</h2>
+    <% if (request.getAttribute("msg") != null) { %>
+        <div class="msg"><%= request.getAttribute("msg") %></div>
+    <% } %>
+    <% if ("1".equals(request.getParameter("registered"))) { %>
+        <div class="msg ok">注册成功，请登录。</div>
+    <% } %>
     <form action="${pageContext.request.contextPath}/login" method="post">
-        <label>用户名 / 账号:</label>
-        <input type="text" name="username" required placeholder="请输入您的用户名">
-
-        <label>密 码:</label>
-        <input type="password" name="password" required placeholder="请输入您的密码">
-
-        <button type="submit">登 录</button>
+        <label>用户名</label>
+        <input name="username" required autocomplete="username">
+        <label>密码</label>
+        <input type="password" name="password" required autocomplete="current-password">
+        <button type="submit">登录</button>
     </form>
-
-    <div class="footer-links">
-        还没有账号？ <a href="${pageContext.request.contextPath}/register.jsp">立即注册账号</a>
+    <div class="links">
+        <a href="${pageContext.request.contextPath}/register.jsp">注册账号</a>
+        &nbsp;|&nbsp;
+        <a href="${pageContext.request.contextPath}/index.jsp">返回首页</a>
     </div>
 </div>
 </body>

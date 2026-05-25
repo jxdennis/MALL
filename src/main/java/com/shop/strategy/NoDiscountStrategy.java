@@ -1,7 +1,10 @@
 package com.shop.strategy;
+
+import java.math.BigDecimal;
+
 public class NoDiscountStrategy implements DiscountStrategy {
     @Override
-    public double calculate(double originalPrice, double discountValue) {
+    public BigDecimal calculate(BigDecimal originalPrice, BigDecimal discountValue) {
         return originalPrice;
     }
 }

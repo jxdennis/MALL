@@ -1,4 +1,7 @@
 package com.shop.strategy;
+
+import java.math.BigDecimal;
+
 public interface DiscountStrategy {
-    double calculate(double originalPrice, double discountValue);
+    BigDecimal calculate(BigDecimal originalPrice, BigDecimal discountValue);
 }

@@ -3,11 +3,11 @@
     <default-config>
         <property name="driverClass">com.mysql.cj.jdbc.Driver</property>
 
-        <property name="jdbcUrl">jdbc:mysql://localhost:3306/online_mall?useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;characterEncoding=utf-8</property>
+        <property name="jdbcUrl">jdbc:mysql://localhost:3306/online_mall?useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;characterEncoding=UTF-8&amp;allowPublicKeyRetrieval=true</property>
 
-        <property name="user">root</property>
+        <property name="user">online_mall_user</property>
 
-        <property name="password">123456</property>
+        <property name="password">CHANGE_ME</property>
 
         <property name="initialPoolSize">3</property>
         <property name="minPoolSize">3</property>

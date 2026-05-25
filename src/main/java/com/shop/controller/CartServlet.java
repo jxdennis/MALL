@@ -1,31 +1,47 @@
 package com.shop.controller;
-import com.shop.dao.ProductDao;
-import com.shop.entity.CartItem;
-import com.shop.entity.Product;
+
+import com.shop.service.CartService;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-import java.util.HashMap;
-import java.util.Map;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @WebServlet("/buyer/cart")
 public class CartServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        try {
-            String action = req.getParameter("action");
-            HttpSession session = req.getSession();
-            Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
-            if (cart == null) { cart = new HashMap<>(); session.setAttribute("cart", cart); }
+    private final CartService cartService = new CartService();
 
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String action = req.getParameter("action");
+        try {
             if ("add".equals(action)) {
-                int productId = Integer.parseInt(req.getParameter("productId"));
-                if (cart.containsKey(productId)) {
-                    cart.get(productId).setQuantity(cart.get(productId).getQuantity() + 1);
-                } else {
-                    Product p = new ProductDao().findById(productId);
-                    cart.put(productId, new CartItem(p, 1));
-                }
-                resp.sendRedirect(req.getContextPath() + "/buyer/cart.jsp");
+                cartService.add(req.getSession(), Integer.parseInt(req.getParameter("productId")));
+                resp.sendRedirect(req.getContextPath() + "/buyer/cart");
+                return;
             }
-        } catch (Exception e) { e.printStackTrace(); }
+            Object flash = req.getSession().getAttribute("cartMsg");
+            if (flash != null) {
+                req.setAttribute("msg", flash);
+                req.getSession().removeAttribute("cartMsg");
+            }
+            req.setAttribute("cart", cartService.getCart(req.getSession()));
+            req.setAttribute("total", cartService.total(cartService.getCart(req.getSession())));
+            req.getRequestDispatcher("/buyer/cart.jsp").forward(req, resp);
+        } catch (Exception e) {
+            req.setAttribute("msg", e.getMessage());
+            req.setAttribute("cart", cartService.getCart(req.getSession()));
+            req.setAttribute("total", cartService.total(cartService.getCart(req.getSession())));
+            req.getRequestDispatcher("/buyer/cart.jsp").forward(req, resp);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        int productId = Integer.parseInt(req.getParameter("productId"));
+        int quantity = Integer.parseInt(req.getParameter("quantity"));
+        cartService.update(req.getSession(), productId, quantity);
+        resp.sendRedirect(req.getContextPath() + "/buyer/cart");
     }
 }

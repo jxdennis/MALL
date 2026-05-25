@@ -1,34 +1,34 @@
 package com.shop.controller;
-import com.shop.dao.UserDao;
+
 import com.shop.entity.User;
+import com.shop.service.UserService;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+    private final UserService userService = new UserService();
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            User u = new User();
-            u.setUsername(req.getParameter("username"));
-            u.setPassword(req.getParameter("password")); // 实际需MD5加密
-            u.setRole(req.getParameter("role"));
-            u.setIdCard(req.getParameter("idCard"));
-            u.setProvince(Integer.parseInt(req.getParameter("province")));
-            u.setCity(Integer.parseInt(req.getParameter("city")));
-            u.setDistrict(Integer.parseInt(req.getParameter("district")));
-
-            // 后端二次正则校验
-            if (!u.getIdCard().matches("^[1-9]\\d{5}(18|19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])\\d{3}[\\dX]$") ||
-                    !u.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
-                req.setAttribute("msg", "数据格式非法！");
-                req.getRequestDispatcher("/register.jsp").forward(req, resp);
-                return;
-            }
-
-            new UserDao().addUser(u);
-            resp.sendRedirect("login.jsp");
+            User user = new User();
+            user.setUsername(req.getParameter("username"));
+            user.setPassword(req.getParameter("password"));
+            user.setRole(req.getParameter("role"));
+            user.setIdCard(req.getParameter("idCard"));
+            user.setProvince(Integer.parseInt(req.getParameter("province")));
+            user.setCity(Integer.parseInt(req.getParameter("city")));
+            user.setDistrict(Integer.parseInt(req.getParameter("district")));
+            userService.register(user, req.getParameter("confirmPassword"));
+            resp.sendRedirect(req.getContextPath() + "/login.jsp?registered=1");
         } catch (Exception e) {
-            e.printStackTrace();
+            req.setAttribute("msg", e.getMessage());
+            req.getRequestDispatcher("/register.jsp").forward(req, resp);
         }
     }
 }
